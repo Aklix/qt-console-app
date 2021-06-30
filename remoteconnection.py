@@ -3,12 +3,25 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 import paramiko
 
-server_hostname = "127.0.0.1"  # change this
-server_username = "user"  # change this
-server_password = "pass"  # change this
+server_hostname = ""
+server_username = ""
+server_password = ""
 port = 22
 timeout = 4
 ssh_key = ""
+
+
+def check_server_connection(ssh_key=None):
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        if ssh_key is not None:
+            ssh_key = paramiko.RSAKey.from_private_key(StringIO(ssh_key))
+        ssh.connect(hostname=server_hostname, username=server_username, password=server_password, port=port, pkey=ssh_key)
+        ssh.close()
+        return
+    except paramiko.SSHException as e:
+        return e
 
 
 def server_ssh_connect(ssh_key=None):
